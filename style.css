@@ -1,21 +1,21 @@
-body{
-  margin: 0;
-    
+body {
+    margin: 0;
+
 }
 
-.mainDiv{
+.mainDiv {
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
 }
 
-.addTaskButton{
+.addTaskButton {
     position: absolute;
     top: 32px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 16px; 
+    padding: 16px;
     border-radius: 16px;
     background: linear-gradient(0.25turn, #3f87a6, #f69d3c);
     cursor: pointer;
@@ -24,32 +24,35 @@ body{
     color: white;
     z-index: 1;
 }
-.addTaskButton:hover{
+
+.addTaskButton:hover {
     background: linear-gradient(0.25turn, #29576b, #8a5822);
 }
-.mainFormPopup{
+
+.mainFormPopup {
     position: absolute;
     z-index: 2;
     width: 100vw;
     height: 100vh;
-    top:0;
+    top: 0;
     left: 0;
     background-color: rgba(0, 0, 0, 0.63);
-    
+
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 300ms ease-in-out;
     opacity: 0;
-   
+
 }
-.d-none{
+
+.d-none {
     display: none;
 }
 
-.childPopup{
+.childPopup {
     padding: 16px;
-    
+
     height: auto;
     width: 300px;
     background-color: white;
@@ -59,18 +62,18 @@ body{
     gap: 16px;
 }
 
-input{
+input {
     padding: 8px;
 }
 
-.mainPriorityDiv{
+.mainPriorityDiv {
     display: flex;
     justify-content: center;
     border: 1px solid gray;
     border-radius: 8px;
 }
 
-.singlePriorityPicker{
+.singlePriorityPicker {
     font-weight: 800;
     transition: all 200ms ease-in-out;
     width: 48px;
@@ -80,20 +83,21 @@ input{
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    
+
 }
-.singlePriorityPicker:hover{
+
+.singlePriorityPicker:hover {
     background-color: rgba(119, 119, 119, 0.671);
 }
 
-.selected{
+.selected {
     border: 1px solid black;
     background-color: #3f87a6;
     color: white;
 }
 
 
-.mainTableDiv{
+.mainTableDiv {
     width: 100%;
     height: 100vh;
     display: flex;
@@ -101,35 +105,38 @@ input{
     align-items: center;
 }
 
-table{
-width: 90%;
-border: 1px solid gray;
+table {
+    width: 90%;
+    border: 1px solid gray;
 }
 
-th{
+th {
     padding: 8px 16px;
     cursor: pointer;
-    border: 1px solid gray;}
-th:hover{
+    border: 1px solid gray;
+}
+
+th:hover {
     padding: 8px 16px;
     background-color: rgb(73, 101, 228);
-  }
+}
 
-  #addOrEditTaskButtonId{
+#addOrEditTaskButtonId {
     padding: 16px;
     border-radius: 16px;
     cursor: pointer;
-  }
-  #addOrEditTaskButtonId:hover{
+}
+
+#addOrEditTaskButtonId:hover {
     background-color: gray;
-  }
+}
 
-  .task-row:hover {
-    background-color: gray; 
+.task-row:hover {
+    background-color: gray;
     cursor: pointer;
-  }
+}
 
-  .justifyCenter{
+.justifyCenter {
     text-align: center;
     vertical-align: middle;
-  }
+}
