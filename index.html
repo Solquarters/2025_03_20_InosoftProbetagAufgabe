@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mainDiv">
+
+    
+<button onclick="openAddTaskPopup()" class="addTaskButton">Add Task</button>
+
+    <div class="mainFormPopup d-none" id="mainFormPopupId">
+
+        <div class="childPopup" id="childPopupId">
+            <input type="text" placeholder="title" id="titleInputId">
+            <input type="text" placeholder="description" id="descriptionInputId">
+            <input type="date" id="dateInputId">
+            
+            <div class="mainPriorityDiv">
+                <div onclick = "selectPrio(this, 1)" class="singlePriorityPicker">1</div>
+                <div onclick = "selectPrio(this, 2)" class="singlePriorityPicker">2</div>
+                <div onclick = "selectPrio(this, 3)" class="singlePriorityPicker">3</div>
+                <div onclick = "selectPrio(this, 4)" class="singlePriorityPicker">4</div>
+                <div onclick = "selectPrio(this, 5)" class="singlePriorityPicker">5</div>
+            </div>
+
+            <span>Priority</span>
+    
+            <button onclick="addNewTask()" id="addOrEditTaskButtonId">
+                Add task
+            </button>
+
+        </div>
+       
+    </div>
+
+    <div class="mainTableDiv">
+        <table id="tableId">
+            <!-- <tr>
+              <td>Title</td>
+              <td>Description</td>
+              <td>DueDate</td>
+              <td>Priority</td>
+            </tr> -->
+            
+                <th data-column="title" onclick="sortTasksBy('title')">Title</th>
+                <th data-column="description" onclick="sortTasksBy('description')">Description</th>
+                <th data-column="prio" onclick="sortTasksBy('prio')">Priority</th>
+                <th data-column="date" onclick="sortTasksBy('date')">DueDate</th>
+            
+          </table>
+
+    </div>
+  
+
+</div>
+</body>
+<script>
+
+    
+
+document.addEventListener("DOMContentLoaded", function() {
+            // Add click event listener to the document
+            document.addEventListener("click", function(e) {
+                const popup = document.getElementById("mainFormPopupId");
+                const childPopup = document.getElementById("childPopupId");
+
+
+                const isTaskRow = e.target.closest('.task-row');
+                if (isTaskRow) {
+            e.stopPropagation();
+            return;
+        }
+                
+                // Check if popup is visible
+                if (!popup.classList.contains('d-none')) {
+                    // Check if click is outside both the child popup and the button
+                    if (!childPopup.contains(e.target) && 
+                        !e.target.classList.contains('addTaskButton')) {
+                        togglePopup('mainFormPopupId');
+                    }
+                }
+            });
+
+
+            renderDataToTable();
+        });
+
+function togglePopup(id){
+
+    let element = document.getElementById(`${id}`);
+
+    if(element.classList.contains('d-none')){
+        element.classList.remove('d-none');
+        setTimeout(()=> {
+            element.style.opacity = 1;
+        }, 0)
+        
+    }else{
+        element.style.opacity = 0;
+        setTimeout(()=> {
+            element.classList.add('d-none');
+
+        }, 300)
+    }
+
+
+}
+
+function openAddTaskPopup() {
+    isEditMode = false;
+    editingTaskId = null;
+    resetForm();
+    
+    // Set button text and function
+    const actionButton = document.getElementById('addOrEditTaskButtonId');
+    actionButton.textContent = 'Add Task';
+    actionButton.onclick = addNewTask;
+    
+    togglePopup('mainFormPopupId');
+}
+
+
+
+function selectPrio(element, number) {
+            let allPrioDivs = document.querySelectorAll('.singlePriorityPicker');
+            for(let div of allPrioDivs){
+                div.classList.remove('selected');
+            }
+            element.classList.add('selected');
+            selectedPrio = number;
+        }
+
+class Task{
+            title;
+            description;
+            prio;
+            dueDate;
+            uid;
+
+            constructor(title, description, prio, dueDate){
+                this.title = title;
+                this.description = description;
+                this.prio = prio;
+                this.dueDate = dueDate;
+                this.uid = crypto.randomUUID();
+            }
+
+        }
+
+function addNewTask(){
+
+            let title = document.getElementById('titleInputId').value;
+            let description = document.getElementById('descriptionInputId').value;
+            let priority = selectedPrio;
+            let dueDate = document.getElementById('dateInputId').value;
+
+            ///FORM VALIDATION HERE
+
+            if(title && description && dueDate && priority){
+                let newTask = new Task(title, description,  priority ,dueDate);
+                allTasks.push(newTask);
+                togglePopup('mainFormPopupId');
+                resetForm();
+                renderDataToTable();
+            }else{
+                alert('Please fill in the form');
+            }
+
+           
+        }
+
+function resetForm(){
+            document.getElementById('titleInputId').value = '';
+            document.getElementById('descriptionInputId').value = '';
+            document.getElementById('dateInputId').value= '';
+            selectedPrio = null;
+            let allPrioDivs = document.querySelectorAll('.singlePriorityPicker');
+            for(let div of allPrioDivs){
+                div.classList.remove('selected');
+            }
+        }
+
+function renderDataToTable(){
+            document.getElementById('tableId').innerHTML = `
+                <th data-column="title" onclick="sortTasksBy('title')">Title</th>
+                <th data-column="description" onclick="sortTasksBy('description')">Description</th>
+                <th data-column="prio" onclick="sortTasksBy('prio')">Priority</th>
+                <th data-column="date" onclick="sortTasksBy('date')">DueDate</th>
+              `;
+
+
+            for(let task of allTasks){
+                document.getElementById('tableId').innerHTML += `
+                <tr class="task-row" onclick="editTableRow('${task.uid}')">
+                    <td>${task.title}</td>
+                    <td>${task.description}</td>
+                    <td class="justifyCenter">${task.prio}</td>
+                    <td class="justifyCenter">${task.dueDate}</td>
+                </tr>`;
+            }
+         
+        }
+
+        let allTasks = [
+                new Task("Complete project", "Finish the JavaScript project", 4, "2025-03-30"),
+                new Task("Study for exam", "Review JavaScript fundamentals", 5, "2025-03-25"),
+                new Task("Buy groceries", "Get milk, bread and eggs", 2, "2025-03-21")
+            ];
+    let selectedPrio;
+    let isEditMode = false;
+    let editingTaskId = null;
+
+
+    function editTableRow(id){
+        editingTaskId = id;
+        const task = allTasks.find(task => task.uid === id);
+        togglePopup('mainFormPopupId');
+        document.getElementById('titleInputId').value = task.title;
+        document.getElementById('descriptionInputId').value = task.description;
+        document.getElementById('dateInputId').value = task.dueDate;
+
+
+        ///PRIO SELECTION 
+        const prioDivs = document.querySelectorAll('.singlePriorityPicker');
+        prioDivs.forEach(div => {
+            div.classList.remove('selected');
+            if (parseInt(div.textContent) === task.prio) {
+                div.classList.add('selected');
+                selectedPrio = task.prio;
+            }
+        });
+
+        ///Button change function. edit entry in allTasks array. 
+        let addOrEditButton = document.getElementById('addOrEditTaskButtonId');
+        addOrEditButton.textContent = 'Update Task';
+        addOrEditButton.onclick = updateExistingTask;
+
+    }
+
+    function updateExistingTask() {
+    let title = document.getElementById('titleInputId').value;
+    let description = document.getElementById('descriptionInputId').value;
+    let priority = selectedPrio;
+    let dueDate = document.getElementById('dateInputId').value;
+    
+    // Form validation
+    if (title && description && dueDate && priority) {
+        const taskIndex = allTasks.findIndex(task => task.uid === editingTaskId);
+        if (taskIndex !== -1) {
+            allTasks[taskIndex].title = title;
+            allTasks[taskIndex].description = description;
+            allTasks[taskIndex].prio = priority;
+            allTasks[taskIndex].dueDate = dueDate;
+        }
+        
+        togglePopup('mainFormPopupId');
+        resetForm();
+        renderDataToTable();
+        
+        // Reset editing state
+        isEditMode = false;
+        editingTaskId = null;
+    } else {
+        alert("Please fill in all fields");
+    }
+}
+
+
+
+// Track current sort state
+let currentSort = {
+    column: null,      // Which column we're sorting by
+    ascending: true    // Direction of sort (true = ascending, false = descending)
+};
+
+function sortTasksBy(column) {
+    // Toggle direction if clicking the same column again
+    if (currentSort.column === column) {
+        currentSort.ascending = !currentSort.ascending;
+    } else {
+        currentSort.column = column;
+        currentSort.ascending = true;  // Default to ascending for new column
+    }
+    
+    // Sort the tasks array
+    allTasks.sort((a, b) => {
+        let valueA, valueB;
+        
+        // Get the appropriate values based on the column
+        switch (column) {
+            case 'title':
+                valueA = a.title.toLowerCase();
+                valueB = b.title.toLowerCase();
+                break;
+            case 'description':
+                valueA = a.description.toLowerCase();
+                valueB = b.description.toLowerCase();
+                break;
+            case 'date':
+                valueA = new Date(a.dueDate);
+                valueB = new Date(b.dueDate);
+                break;
+            case 'prio':
+                valueA = a.prio;
+                valueB = b.prio;
+                break;
+            default:
+                return 0;  // No change if invalid column
+        }
+        
+        // For strings: use localeCompare for proper string comparison
+        if (typeof valueA === 'string') {
+            return currentSort.ascending 
+                ? valueA.localeCompare(valueB) 
+                : valueB.localeCompare(valueA);
+        }
+        
+        // For numbers and dates
+        return currentSort.ascending 
+            ? valueA - valueB 
+            : valueB - valueA;
+    });
+    
+    // Redraw the table with the sorted data
+    renderDataToTable();
+    
+    // Visually indicate the current sort (optional enhancement)
+    updateSortIndicators(column, currentSort.ascending);
+}
+
+// Optional function to update visual indicators in table headers
+function updateSortIndicators(column, ascending) {
+    // Remove all existing indicators
+    document.querySelectorAll('th .sort-indicator').forEach(el => el.remove());
+    
+    // Find the header for the current column
+    const header = document.querySelector(`th[data-column="${column}"]`);
+    if (header) {
+        // Add the appropriate indicator
+        const indicator = document.createElement('span');
+        indicator.className = 'sort-indicator';
+        indicator.textContent = ascending ? ' ▲' : ' ▼';
+        header.appendChild(indicator);
+    }
+}
+</script>
+</html>
