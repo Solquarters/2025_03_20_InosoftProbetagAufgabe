@@ -1,9 +1,17 @@
+@font-face {
+    font-family: 'NTSomic'; /* Choose a name for your font */
+    src: url('./fonts/01_NTSomic-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 body {
     margin: 0;
-
+font-family: 'NTSomic';
 }
 
 .mainDiv {
+    background: radial-gradient(rgb(254, 254, 255), rgb(195, 195, 255));
     display: flex;
     justify-content: center;
     align-items: center;
@@ -124,7 +132,7 @@ th {
 th:hover {
     padding: 8px 16px;
     background-color: rgb(133, 151, 233);
-    transition: all 100ms ease-in-out;
+    transition: all 200ms ease-in-out;
 }
 
 #addOrEditTaskButtonId {
@@ -139,6 +147,22 @@ th:hover {
     background-color: rgb(165, 165, 165);
 }
 
+#deleteTaskButtonId{
+    border: 1px solid rgba(128, 128, 128, 0.486);
+    padding: 16px;
+    border-radius: 16px;
+    cursor: pointer;
+    margin: 0px 0px;
+    background-color: rgba(255, 0, 0, 0.603);
+    font-weight: 800;
+    color: white;
+   
+}
+#deleteTaskButtonId:hover{
+    background-color: rgba(255, 0, 0, 0.822);
+    
+}
+
 
 .task-row td {
     padding: 12px;
@@ -146,9 +170,9 @@ th:hover {
     
 }
 .task-row:hover {
-    background-color: rgb(165, 165, 165);
+    background-color: rgb(192, 192, 192);
     cursor: pointer;
-    transition: all 100ms ease-in-out;
+    transition: all 200ms ease-in-out;
 }
 
 .justifyCenter {

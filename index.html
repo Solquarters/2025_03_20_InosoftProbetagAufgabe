@@ -35,6 +35,10 @@
                     Add task
                 </button>
 
+                <button onclick="deleteTask()" id="deleteTaskButtonId" class="d-none">
+                    Delete this task
+                </button>
+
             </div>
 
         </div>
@@ -185,6 +189,10 @@
         for (let div of allPrioDivs) {
             div.classList.remove('selected');
         }
+
+        let deleteButton = document.getElementById('deleteTaskButtonId');
+        deleteButton.classList.add('d-none');
+        deleteButton.onclick = '';
     }
 
     function renderDataToTable() {
@@ -234,12 +242,40 @@
             }
         });
 
-        ///Button change function. edit entry in allTasks array. 
+        changeButtonLayoutForEditing();
+
+
+    }
+
+    function changeButtonLayoutForEditing(){
         let addOrEditButton = document.getElementById('addOrEditTaskButtonId');
         addOrEditButton.textContent = 'Update Task';
         addOrEditButton.onclick = updateExistingTask;
 
+        let deleteButton = document.getElementById('deleteTaskButtonId');
+        deleteButton.onclick = () => deleteTask(id);
+        deleteButton.classList.remove('d-none');
     }
+
+    function deleteTask(id) {
+    const taskId = id || editingTaskId;
+    if (!taskId) {
+        console.error('No task ID provided for deletion');
+        return;
+    }
+    const taskIndex = allTasks.findIndex(task => task.uid === taskId);
+    if (taskIndex === -1) {
+        console.error('Task not found for deletion');
+        return;
+    }
+    allTasks.splice(taskIndex, 1);
+    togglePopup('mainFormPopupId');
+    resetForm();
+    saveToLocalStorage();
+    renderDataToTable();
+    isEditMode = false;
+    editingTaskId = null;
+}
 
     function updateExistingTask() {
         let title = document.getElementById('titleInputId').value;
@@ -316,6 +352,7 @@
                 : valueB - valueA;
         });
 
+        saveToLocalStorage();
         renderDataToTable();
         updateSortIndicators(column, currentSort.ascending);
     }
