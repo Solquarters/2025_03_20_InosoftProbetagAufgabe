@@ -63,13 +63,16 @@ body {
 }
 
 input {
-    padding: 8px;
+    margin: 4px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(128, 128, 128, 0.486);
 }
 
 .mainPriorityDiv {
     display: flex;
     justify-content: center;
-    border: 1px solid gray;
+    border: 1px solid rgba(128, 128, 128, 0.486);
     border-radius: 8px;
 }
 
@@ -108,9 +111,11 @@ input {
 table {
     width: 90%;
     border: 1px solid gray;
+    border-radius: 8px;
 }
 
 th {
+    border-radius: 8px;
     padding: 8px 16px;
     cursor: pointer;
     border: 1px solid gray;
@@ -118,25 +123,36 @@ th {
 
 th:hover {
     padding: 8px 16px;
-    background-color: rgb(73, 101, 228);
+    background-color: rgb(133, 151, 233);
+    transition: all 100ms ease-in-out;
 }
 
 #addOrEditTaskButtonId {
+    border: 1px solid rgba(128, 128, 128, 0.486);
     padding: 16px;
     border-radius: 16px;
     cursor: pointer;
+    margin: 16px 0px;
 }
 
 #addOrEditTaskButtonId:hover {
-    background-color: gray;
+    background-color: rgb(165, 165, 165);
 }
 
+
+.task-row td {
+    padding: 12px;
+    border-radius: 8px;
+    
+}
 .task-row:hover {
-    background-color: gray;
+    background-color: rgb(165, 165, 165);
     cursor: pointer;
+    transition: all 100ms ease-in-out;
 }
 
 .justifyCenter {
     text-align: center;
     vertical-align: middle;
 }
+

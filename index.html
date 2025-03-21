@@ -29,7 +29,7 @@
                     <div onclick="selectPrio(this, 5)" class="singlePriorityPicker">5</div>
                 </div>
 
-                <span>Priority</span>
+                <span style="text-align: center;">Priority</span>
 
                 <button onclick="addNewTask()" id="addOrEditTaskButtonId">
                     Add task
@@ -61,7 +61,10 @@
     </div>
 </body>
 <script>
-
+    let allTasks = [];
+    let selectedPrio;
+    let isEditMode = false;
+    let editingTaskId = null;
 
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -164,6 +167,7 @@
             allTasks.push(newTask);
             togglePopup('mainFormPopupId');
             resetForm();
+            saveToLocalStorage();
             renderDataToTable();
         } else {
             alert('Please fill in the form');
@@ -184,6 +188,10 @@
     }
 
     function renderDataToTable() {
+
+        allTasks = getAllTasksFromLocalStorage();
+
+
         document.getElementById('tableId').innerHTML = `
                 <th data-column="title" onclick="sortTasksBy('title')">Title</th>
                 <th data-column="description" onclick="sortTasksBy('description')">Description</th>
@@ -197,21 +205,15 @@
                 <tr class="task-row" onclick="editTableRow('${task.uid}')">
                     <td>${task.title}</td>
                     <td>${task.description}</td>
-                    <td class="justifyCenter">${task.prio}</td>
+                    <td class="justifyCenter ">${task.prio}</td>
                     <td class="justifyCenter">${task.dueDate}</td>
                 </tr>`;
         }
 
     }
 
-    let allTasks = [
-        new Task("Complete project", "Finish the JavaScript project", 4, "2025-03-30"),
-        new Task("Study for exam", "Review JavaScript fundamentals", 5, "2025-03-25"),
-        new Task("Buy groceries", "Get milk, bread and eggs", 2, "2025-03-21")
-    ];
-    let selectedPrio;
-    let isEditMode = false;
-    let editingTaskId = null;
+
+
 
 
     function editTableRow(id) {
@@ -221,7 +223,6 @@
         document.getElementById('titleInputId').value = task.title;
         document.getElementById('descriptionInputId').value = task.description;
         document.getElementById('dateInputId').value = task.dueDate;
-
 
         ///PRIO SELECTION 
         const prioDivs = document.querySelectorAll('.singlePriorityPicker');
@@ -258,6 +259,7 @@
 
             togglePopup('mainFormPopupId');
             resetForm();
+            saveToLocalStorage();
             renderDataToTable();
             isEditMode = false;
             editingTaskId = null;
@@ -265,8 +267,6 @@
             alert("Please fill in all fields");
         }
     }
-
-
 
     // Tracking current sort state
     let currentSort = {
@@ -320,7 +320,6 @@
         updateSortIndicators(column, currentSort.ascending);
     }
 
-
     function updateSortIndicators(column, ascending) {
         document.querySelectorAll('th .sort-indicator').forEach(el => el.remove());
         const header = document.querySelector(`th[data-column="${column}"]`);
@@ -331,6 +330,44 @@
             header.appendChild(indicator);
         }
     }
+
+    function saveToLocalStorage() {
+        localStorage.setItem("taskArray", JSON.stringify(allTasks));
+    }
+
+    function getAllTasksFromLocalStorage() {
+        const tasksJSON = localStorage.getItem("taskArray");
+        if (!tasksJSON) {
+            return [];
+        }
+        try {
+            const parsedTasks = JSON.parse(tasksJSON);
+            if (Array.isArray(parsedTasks)) {
+                return parsedTasks;
+            } else {
+                console.error("Stored tasks data is not an array");
+                return [];
+            }
+        } catch (error) {
+            console.error("Error parsing tasks from localStorage:", error);
+            return [];
+        }
+    }
+
+    function init() {
+        allTasks = getAllTasksFromLocalStorage();
+        if (allTasks.length === 0) {
+            allTasks = [
+                new Task("Complete project", "Finish the JavaScript project", 4, "2025-03-30"),
+                new Task("Study for exam", "Review JavaScript fundamentals", 5, "2025-03-25"),
+                new Task("Buy groceries", "Get milk, bread and eggs", 2, "2025-03-21")
+            ];
+            saveToLocalStorage();
+        }
+    }
+
+    init();
+
 </script>
 
 </html>
