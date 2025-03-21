@@ -13,11 +13,8 @@
 -PWA 
 -->
 
-
 <body>
     <div class="mainDiv">
-
-
         <button onclick="openAddTaskPopup()" class="addTaskButton">Add Task</button>
 
         <div class="mainFormPopup d-none" id="mainFormPopupId">
@@ -44,30 +41,17 @@
                 <button onclick="deleteTask()" id="deleteTaskButtonId" class="d-none">
                     Delete this task
                 </button>
-
             </div>
-
         </div>
 
         <div class="mainTableDiv">
             <table id="tableId">
-                <!-- <tr>
-              <td>Title</td>
-              <td>Description</td>
-              <td>DueDate</td>
-              <td>Priority</td>
-            </tr> -->
-
                 <th data-column="title" onclick="sortTasksBy('title')">Title</th>
                 <th data-column="description" onclick="sortTasksBy('description')">Description</th>
                 <th data-column="prio" onclick="sortTasksBy('prio')">Priority</th>
                 <th data-column="date" onclick="sortTasksBy('date')">DueDate</th>
-
             </table>
-
         </div>
-
-
     </div>
 </body>
 <script>
@@ -76,19 +60,15 @@
     let isEditMode = false;
     let editingTaskId = null;
 
-
     document.addEventListener("DOMContentLoaded", function () {
         document.addEventListener("click", function (e) {
             const popup = document.getElementById("mainFormPopupId");
             const childPopup = document.getElementById("childPopupId");
-
-
             const isTaskRow = e.target.closest('.task-row');
             if (isTaskRow) {
                 e.stopPropagation();
                 return;
             }
-
             if (!popup.classList.contains('d-none')) {
                 if (!childPopup.contains(e.target) &&
                     !e.target.classList.contains('addTaskButton')) {
@@ -96,15 +76,11 @@
                 }
             }
         });
-
-
         renderDataToTable();
     });
 
     function togglePopup(id) {
-
         let element = document.getElementById(`${id}`);
-
         if (element.classList.contains('d-none')) {
             element.classList.remove('d-none');
             setTimeout(() => {
@@ -118,24 +94,17 @@
 
             }, 300)
         }
-
-
     }
 
     function openAddTaskPopup() {
         isEditMode = false;
         editingTaskId = null;
         resetForm();
-
-        // Set button text and function
         const actionButton = document.getElementById('addOrEditTaskButtonId');
         actionButton.textContent = 'Add Task';
         actionButton.onclick = addNewTask;
-
         togglePopup('mainFormPopupId');
     }
-
-
 
     function selectPrio(element, number) {
         let allPrioDivs = document.querySelectorAll('.singlePriorityPicker');
@@ -152,7 +121,6 @@
         prio;
         dueDate;
         uid;
-
         constructor(title, description, prio, dueDate) {
             this.title = title;
             this.description = description;
@@ -160,18 +128,15 @@
             this.dueDate = dueDate;
             this.uid = crypto.randomUUID();
         }
-
     }
 
     function addNewTask() {
-
         let title = document.getElementById('titleInputId').value;
         let description = document.getElementById('descriptionInputId').value;
         let priority = selectedPrio;
         let dueDate = document.getElementById('dateInputId').value;
 
         ///FORM VALIDATION HERE
-
         if (title && description && dueDate && priority) {
             let newTask = new Task(title, description, priority, dueDate);
             allTasks.push(newTask);
@@ -182,8 +147,6 @@
         } else {
             alert('Please fill in the form');
         }
-
-
     }
 
     function resetForm() {
@@ -195,24 +158,19 @@
         for (let div of allPrioDivs) {
             div.classList.remove('selected');
         }
-
         let deleteButton = document.getElementById('deleteTaskButtonId');
         deleteButton.classList.add('d-none');
         deleteButton.onclick = '';
     }
 
     function renderDataToTable() {
-
         allTasks = getAllTasksFromLocalStorage();
-
-
         document.getElementById('tableId').innerHTML = `
                 <th data-column="title" onclick="sortTasksBy('title')">Title</th>
                 <th data-column="description" onclick="sortTasksBy('description')">Description</th>
                 <th data-column="prio" onclick="sortTasksBy('prio')">Priority</th>
                 <th data-column="date" onclick="sortTasksBy('date')">DueDate</th>
               `;
-
 
         for (let task of allTasks) {
             document.getElementById('tableId').innerHTML += `
@@ -223,12 +181,7 @@
                     <td class="justifyCenter">${task.dueDate}</td>
                 </tr>`;
         }
-
     }
-
-
-
-
 
     function editTableRow(id) {
         editingTaskId = id;
@@ -247,13 +200,10 @@
                 selectedPrio = task.prio;
             }
         });
-
-        changeButtonLayoutForEditing();
-
-
+        changeButtonLayoutForEditing(id);
     }
 
-    function changeButtonLayoutForEditing(){
+    function changeButtonLayoutForEditing(id) {
         let addOrEditButton = document.getElementById('addOrEditTaskButtonId');
         addOrEditButton.textContent = 'Update Task';
         addOrEditButton.onclick = updateExistingTask;
@@ -264,24 +214,24 @@
     }
 
     function deleteTask(id) {
-    const taskId = id || editingTaskId;
-    if (!taskId) {
-        console.error('No task ID provided for deletion');
-        return;
+        const taskId = id || editingTaskId;
+        if (!taskId) {
+            console.error('No task ID provided for deletion');
+            return;
+        }
+        const taskIndex = allTasks.findIndex(task => task.uid === taskId);
+        if (taskIndex === -1) {
+            console.error('Task not found for deletion');
+            return;
+        }
+        allTasks.splice(taskIndex, 1);
+        togglePopup('mainFormPopupId');
+        resetForm();
+        saveToLocalStorage();
+        renderDataToTable();
+        isEditMode = false;
+        editingTaskId = null;
     }
-    const taskIndex = allTasks.findIndex(task => task.uid === taskId);
-    if (taskIndex === -1) {
-        console.error('Task not found for deletion');
-        return;
-    }
-    allTasks.splice(taskIndex, 1);
-    togglePopup('mainFormPopupId');
-    resetForm();
-    saveToLocalStorage();
-    renderDataToTable();
-    isEditMode = false;
-    editingTaskId = null;
-}
 
     function updateExistingTask() {
         let title = document.getElementById('titleInputId').value;
